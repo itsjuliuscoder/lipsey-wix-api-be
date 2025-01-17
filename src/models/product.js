@@ -7,4 +7,4 @@ const productSchema = new mongoose.Schema({
   lastSynced: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model('ProductLW', productSchema);
