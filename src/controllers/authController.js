@@ -31,6 +31,7 @@ const login = async (req, res) => {
 const lipseyLogin = async (req, res) => {
   try {
     const response = await lipseyService.authLogin(req.body);
+    console.log('lipseys response', response);
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });
