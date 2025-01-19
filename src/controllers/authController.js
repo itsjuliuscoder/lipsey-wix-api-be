@@ -1,6 +1,7 @@
 // src/controllers/authController.js
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const lipseyService = require('../services/lipseyService');
 
 const register = async (req, res) => {
   try {
@@ -27,4 +28,13 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const lipseyLogin = async (req, res) => {
+  try {
+    const response = await lipseyService.authLogin(req.body);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+module.exports = { register, login, lipseyLogin };
