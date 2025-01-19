@@ -21,8 +21,8 @@ async function authLogin(body) {
     method: 'post',
     url: 'https://api.lipseys.com/api/integration/authentication/login',
     data: {
-      email: body.email,
-      password: body.password,
+      Email: body.email,
+      Password: body.password,
     },
   });
 
