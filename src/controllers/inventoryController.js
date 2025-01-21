@@ -1,5 +1,6 @@
 // src/controllers/inventoryController.js
 const Product = require('../models/product');
+const {queryProducts, queryCollections} = require('../services/wixService');
 const axios = require('axios');
 
 const syncInventory = async (req, res) => {
@@ -27,4 +28,22 @@ const syncInventory = async (req, res) => {
   }
 };
 
-module.exports = { syncInventory };
+const getWixProducts = async (req, res) => {
+  try {
+    const products = await queryProducts();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getWixCollections = async (req, res) => {
+  try {
+    const collections = await queryCollections();
+    res.status(200).json(collections);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+module.exports = { syncInventory, getWixProducts, getWixCollections };
