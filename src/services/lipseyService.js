@@ -17,18 +17,28 @@ async function getLipseyInventory() {
 }
 
 async function authLogin(body) {
-  const response = await axios({
-    method: 'post',
-    url: 'https://api.lipseys.com/api/integration/authentication/login',
-    data: {
-      Email: body.email,
-      Password: body.password,
-    },
-  });
+  console.log("authLogin body", body);
+  const payload = {
+    Email: body.email,
+    Password: body.password,
+  };
 
-  console.log(response.data);
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'https://api.lipseys.com/api/integration/authentication/login',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: payload,
+    });
 
-  return response.data;
+    console.log("lipseys response", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error during authentication:", error.response ? error.response.data : error.message);
+    throw error;
+  }
 }
 
 module.exports = { getLipseyInventory, authLogin };
