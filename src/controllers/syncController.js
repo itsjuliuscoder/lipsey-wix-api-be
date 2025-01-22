@@ -3,33 +3,65 @@ const { getLipseyInventory, getCatalogFeed } = require('../services/lipseyServic
 
 async function syncInventory(req, res) {
   try {
-    const wixProducts = await queryProducts();
-    const lipseyInventory = await getCatalogFeed();
-
-    const syncResults = [];
-    for (const wixProduct of wixProducts) {
-      const matchingLipseyItem = lipseyInventory.find(
-        (item) => item.upc === wixProduct.sku
-      );
-      
-      if(matchingLipseyItem){
-        syncResults = matchingLipseyItem
+    
+    const wixData = await queryProducts();
+    const lipseyData = await getCatalogFeed();
+  
+    const unifiedLipseyData = mapLipseyToUnifiedFormat(lipseyData);
+    const unifiedWixData = mapWixToUnifiedFormat(wixData);
+  
+    const updates = unifiedLipseyData.map((lipseyItem) => {
+      const wixItem = unifiedWixData.find((item) => item.sku === lipseyItem.sku);
+  
+      if (!wixItem) {
+        console.log(`Item with SKU ${lipseyItem.sku} not found in Wix data.`);
+        return null;
       }
+  
+      const updates = {};
+      if (lipseyItem.price !== wixItem.price) {
+        updates.price = lipseyItem.price;
+      }
+      if (lipseyItem.quantity !== wixItem.quantity) {
+        updates.quantity = lipseyItem.quantity;
+      }
+  
+      return {
+        sku: lipseyItem.sku,
+        updates,
+      };
+    }).filter(Boolean);
+  
+    // Return the updates as the result
+    res.status(200).json({
+        success: true,
+        updates,
+    });
 
-    //   if (matchingLipseyItem) {
-    //     const updated = await updateWixInventory(
-    //       wixProduct.id,
-    //       matchingLipseyItem.quantity
-    //     );
-    //     syncResults.push({ product: wixProduct.name, updated });
-    //   }
-    }
-
-    res.status(200).json({ message: 'Synchronization complete', syncResults });
   } catch (error) {
     console.error('Error during synchronization:', error);
     res.status(500).json({ error: 'Synchronization failed' });
   }
+}
+
+// Function to map Lipsey data to the unified schema
+function mapLipseyToUnifiedFormat(lipseyData) {
+    return lipseyData.map((item) => ({
+        sku: item.itemNo,
+        name: item.description1,
+        price: item.price,
+        quantity: item.quantity,
+    }));
+}
+
+// Function to map Wix data to the unified schema
+function mapWixToUnifiedFormat(wixData) {
+    return wixData.map((item) => ({
+        sku: item.sku,
+        name: item.name,
+        price: item.price,
+        quantity: item.stock.quantity,
+    }));
 }
 
 module.exports = { syncInventory };
