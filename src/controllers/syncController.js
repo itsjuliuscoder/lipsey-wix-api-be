@@ -1,18 +1,20 @@
 const { queryProducts, updateWixInventory } = require('../services/wixService');
 const { getLipseyInventory, getCatalogFeed } = require('../services/lipseyService');
+const data = require('./data.json');
+
 
 async function syncInventory(req, res) {
   try {
     
     const wixData = await queryProducts();
-    const lipseyData = await getCatalogFeed();
+    const lipseyData = data;
   
     const unifiedLipseyData = mapLipseyToUnifiedFormat(lipseyData);
     const unifiedWixData = mapWixToUnifiedFormat(wixData);
   
     const updates = unifiedLipseyData.map((lipseyItem) => {
       const wixItem = unifiedWixData.find((item) => item.sku === lipseyItem.sku);
-  
+        
       if (!wixItem) {
         console.log(`Item with SKU ${lipseyItem.sku} not found in Wix data.`);
         return null;
