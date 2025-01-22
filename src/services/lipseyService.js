@@ -25,7 +25,7 @@ async function getCatalogFeed() {
         Token: `${LIPSEY_AUTH_TOKEN}`,
       },
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("Error fetching catalog feed:", error.response ? error.response.data : error.message);
     throw error;
