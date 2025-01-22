@@ -1,12 +1,13 @@
 const axios = require('axios');
 
-const LIPSEY_API_BASE_URL = 'https://api.lipsey.com'; // Replace with actual base URL
-const LIPSEY_AUTH_TOKEN = process.env.LIPSEY_AUTH_TOKEN;
+const LIPSEY_API_BASE_URL = 'https://api.lipseys.com/api'; // Replace with actual base URL
+const LIPSEY_AUTH_TOKEN = process.env.LIPSEY_API_KEY;
 
 const axiosInstance = axios.create({
   baseURL: LIPSEY_API_BASE_URL,
   headers: {
-    Authorization: `Bearer ${LIPSEY_AUTH_TOKEN}`,
+    Authorization: `Token ${LIPSEY_AUTH_TOKEN}`,
+    'Content-Type': 'application/json'
   },
 });
 
@@ -14,6 +15,15 @@ const axiosInstance = axios.create({
 async function getLipseyInventory() {
   const response = await axiosInstance.get('/inventory');
   return response.data.items;
+}
+
+async function getCatalogFeed() {
+  const response = await axiosInstance.get('/integration/items/CatalogFeed');
+  return response.data;
+} 
+
+async function pricingQuantityFeed(){
+  const response = await axiosInstance.get('/integration/items/PricingQuantityFeed')
 }
 
 async function authLogin(body) {
@@ -41,4 +51,4 @@ async function authLogin(body) {
   }
 }
 
-module.exports = { getLipseyInventory, authLogin };
+module.exports = { getLipseyInventory, authLogin, getCatalogFeed, pricingQuantityFeed };

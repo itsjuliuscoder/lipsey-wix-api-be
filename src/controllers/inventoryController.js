@@ -1,6 +1,7 @@
 // src/controllers/inventoryController.js
 const Product = require('../models/product');
 const {queryProducts, queryCollections} = require('../services/wixService');
+const {getCatalogFeed, pricingQuantityFeed } = require('../services/lipseyService');
 const axios = require('axios');
 
 const syncInventory = async (req, res) => {
@@ -46,4 +47,22 @@ const getWixCollections = async (req, res) => {
   }
 }
 
-module.exports = { syncInventory, getWixProducts, getWixCollections };
+const getLipseyCatalog = async (req, res) => {
+  try {
+    const catalog = await getCatalogFeed();
+    res.status(200).json(catalog);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+const getLipseyPricingQuantityFeed = async (req, res) => {
+  try {
+    const catalog = await pricingQuantityFeed();
+    res.status(200).json(catalog);
+  } catch(error){
+    res.status(500).json({ error: error.message })
+  }
+}
+
+module.exports = { syncInventory, getWixProducts, getWixCollections, getLipseyCatalog, getLipseyPricingQuantityFeed };
