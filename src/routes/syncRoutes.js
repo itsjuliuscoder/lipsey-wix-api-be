@@ -3,6 +3,6 @@ const { syncInventory } = require('../controllers/syncController');
 
 const router = express.Router();
 
-router.post('/sync', syncInventory);
+router.post('/', syncInventory);
 
 module.exports = router;
