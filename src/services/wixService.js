@@ -1,6 +1,6 @@
 const axios = require('axios');
 const WIX_API_BASE_URL = 'https://www.wixapis.com/stores/v2';
-const WIX_AUTH_TOKEN = process.env.WIX_AUTH_TOKEN;
+const WIX_AUTH_TOKEN = process.env.WIX_API_KEY;
 
 const { createClient } = require("@wix/sdk");
 const { products, collections } = require("@wix/stores");
