@@ -6,9 +6,8 @@ const LIPSEY_AUTH_TOKEN = process.env.LIPSEY_API_KEY;
 const axiosInstance = axios.create({
   baseURL: LIPSEY_API_BASE_URL,
   headers: {
-    Authorization: `Token ${LIPSEY_AUTH_TOKEN}`,
-    'Content-Type': 'application/json'
-  },
+    Token: `${LIPSEY_AUTH_TOKEN}`,
+  }
 });
 
 // Fetch Lipseys inventory
@@ -18,9 +17,20 @@ async function getLipseyInventory() {
 }
 
 async function getCatalogFeed() {
-  const response = await axiosInstance.get('/integration/items/CatalogFeed');
-  return response.data;
-} 
+  try {
+    const response = await axios({
+      method: 'get',
+      url: `${LIPSEY_API_BASE_URL}/integration/items/CatalogFeed`,
+      headers: {
+        Token: `${LIPSEY_AUTH_TOKEN}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching catalog feed:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+}
 
 async function pricingQuantityFeed(){
   const response = await axiosInstance.get('/integration/items/PricingQuantityFeed')
