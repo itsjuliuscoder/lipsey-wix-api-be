@@ -40,7 +40,7 @@ async function syncInventory(req, res) {
 
   } catch (error) {
     console.error('Error during synchronization:', error);
-    res.status(500).json({ error: 'Synchronization failed' });
+    res.status(500).json({ error: error, details: error.message });
   }
 }
 
