@@ -33,7 +33,19 @@ async function getCatalogFeed() {
 }
 
 async function pricingQuantityFeed(){
-  const response = await axiosInstance.get('/integration/items/PricingQuantityFeed')
+  try {
+    const response = await axios({
+      method: 'get',
+      url: `${LIPSEY_API_BASE_URL}/integration/items/PricingQuantityFeed`,
+      headers: {
+        Token: `${LIPSEY_AUTH_TOKEN}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching catalog feed:", error.response ? error.response.data : error.message);
+    throw error;
+  }
 }
 
 async function authLogin(body) {
