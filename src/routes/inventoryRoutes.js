@@ -8,5 +8,6 @@ router.get('/wix-products', getWixProducts);
 router.get('/wix-collections', getWixCollections);
 router.get('/lipsey-catalog', getLipseyCatalog);
 router.get('/lipsey-pricing', getLipseyPricingQuantityFeed);
+router.get('/wix-inventories', syncInventory)
 
 module.exports = router;

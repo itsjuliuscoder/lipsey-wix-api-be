@@ -3,11 +3,11 @@ const WIX_API_BASE_URL = 'https://www.wixapis.com/stores/v2';
 const WIX_AUTH_TOKEN = process.env.WIX_API_KEY;
 
 const { createClient } = require("@wix/sdk");
-const { products, collections } = require("@wix/stores");
+const { products, collections, inventory } = require("@wix/stores");
 const OAuthStrategy = require("@wix/sdk").OAuthStrategy;
 
 const myWixClient = createClient({
-    modules: { products, collections },
+    modules: { products, collections, inventory  },
     auth: OAuthStrategy({ clientId: '3e0af21c-448b-4c0f-9324-122e33b96358' }),
 });
 
@@ -53,6 +53,29 @@ async function queryProducts() {
     return { items: allProducts, totalCount: allProducts.length };
 }
 
+async function queryInventory() {
+    let allInventoryItems = [];
+    let hasNext = true;
+    let cursor = null;
+  
+    while (hasNext) {
+      const response = await myWixClient.inventory.queryInventory().find({ cursor, limit: 100 });
+        
+      console.log("this is the response -->", response);
+      const { items, pageSize, totalCount, nextCursor } = response;
+  
+      allInventoryItems = allInventoryItems.concat(items);
+  
+      if (nextCursor) {
+        cursor = nextCursor;
+      } else {
+        hasNext = false;
+      }
+    }
+  
+    return { items: allInventoryItems, totalCount: allInventoryItems.length };
+}
+
 
 async function queryCollections() {
   const { items } = await myWixClient.collections.queryCollections().find();
@@ -70,4 +93,8 @@ async function updateWixInventory(productId, quantity) {
   return response.data;
 }
 
-module.exports = { updateWixInventory, queryProducts, queryCollections};
+async function updateProduct(id, product) {
+    const response = await myWixClient.products.updateProduct(id, product);
+  }
+
+module.exports = { updateWixInventory, queryProducts, queryCollections, queryInventory};
