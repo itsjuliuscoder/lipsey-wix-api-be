@@ -1,6 +1,6 @@
 const { queryProducts, updateWixInventory } = require('../services/wixService');
 const { getLipseyInventory, getCatalogFeed } = require('../services/lipseyService');
-const data = require('./data.json');
+// const data = require('./data.json');
 const SyncLog = require('../models/SyncLog');
 
 
@@ -57,7 +57,7 @@ async function syncInventory(req, res) {
         const selectedProductSkus = req.body.skus; // List of SKUs to sync
 
         // Fetch inventory data from both Lipsey and Wix
-        const lipseyInventory = data;
+        const lipseyInventory = await getCatalogFeed();
         const wixInventory = await queryProducts(); 
         const wixData = wixInventory.items;
 
