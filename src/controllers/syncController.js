@@ -120,52 +120,62 @@ function mapWixToUnifiedFormat(wixData) {
 }
 
 async function syncInventories() {
-    const lipseysProducts = await getCatalogFeed();
-    const wixProducts = await queryProducts();
+    try {
+        const lipseysProducts = await getCatalogFeed();
+        const wixProducts = await queryProducts();
 
-    const syncedProducts = [];
-    const notFoundProducts = [];
-    const updatedProducts = [];
-    const unchangedProducts = [];
+        // Ensure wixProducts is an array
+        if (!Array.isArray(wixProducts)) {
+            throw new Error('Wix products data is not an array');
+        }
 
-    for (const lipseysProduct of lipseysProducts) {
-        const matchingWixProduct = wixProducts.find(
-            (wixProduct) => wixProduct.sku === lipseysProduct.itemNo
-        );
+        const syncedProducts = [];
+        const notFoundProducts = [];
+        const updatedProducts = [];
+        const unchangedProducts = [];
 
-        if (matchingWixProduct) {
-            const wixStock = matchingWixProduct.variants[0].stock.quantity || 0;
-            const lipseysStock = lipseysProduct.quantity || 0;
+        for (const lipseysProduct of lipseysProducts) {
+            const matchingWixProduct = wixProducts.find(
+                (wixProduct) => wixProduct.sku === lipseysProduct.itemNo
+            );
 
-            if (wixStock !== lipseysStock) {
-                await updateWixInventory(matchingWixProduct._id, lipseysStock);
-                updatedProducts.push({
+            if (matchingWixProduct) {
+                const wixStock = matchingWixProduct.variants[0].stock.quantity || 0;
+                const lipseysStock = lipseysProduct.quantity || 0;
+
+                if (wixStock !== lipseysStock) {
+                    await updateWixInventory(matchingWixProduct._id, lipseysStock);
+                    updatedProducts.push({
+                        wixProductId: matchingWixProduct._id,
+                        itemNo: lipseysProduct.itemNo,
+                        previousStock: wixStock,
+                        updatedStock: lipseysStock,
+                    });
+                } else {
+                    unchangedProducts.push({
+                        wixProductId: matchingWixProduct._id,
+                        itemNo: lipseysProduct.itemNo,
+                        stock: wixStock,
+                    });
+                }
+                syncedProducts.push({
                     wixProductId: matchingWixProduct._id,
                     itemNo: lipseysProduct.itemNo,
-                    previousStock: wixStock,
-                    updatedStock: lipseysStock,
+                    stock: lipseysStock,
                 });
             } else {
-                unchangedProducts.push({
-                    wixProductId: matchingWixProduct._id,
+                notFoundProducts.push({
                     itemNo: lipseysProduct.itemNo,
-                    stock: wixStock,
+                    description: lipseysProduct.description1,
                 });
             }
-            syncedProducts.push({
-                wixProductId: matchingWixProduct._id,
-                itemNo: lipseysProduct.itemNo,
-                stock: lipseysStock,
-            });
-        } else {
-            notFoundProducts.push({
-                itemNo: lipseysProduct.itemNo,
-                description: lipseysProduct.description1,
-            });
         }
-    }
 
-    return { syncedProducts, notFoundProducts, updatedProducts, unchangedProducts };
+        return { syncedProducts, notFoundProducts, updatedProducts, unchangedProducts };
+    } catch (error) {
+        console.error('Error during synchronization:', error.message);
+        throw new Error('Failed to sync inventory.');
+    }
 }
 
 
