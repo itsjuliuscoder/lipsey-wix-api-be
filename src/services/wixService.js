@@ -21,27 +21,38 @@ const axiosInstance = axios.create({
 
 
 async function queryProducts() {
-  
     let allProducts = [];
-    let hasNext = true;
-    let cursor = null;
+    let offset = 0;
+    const limit = 100; // Number of items per page
+    let totalCount = 0;
 
-    while (hasNext) {
-        const response = await myWixClient.products.queryProducts().find({ cursor });
-        const { items, paging } = response;
+    while (true) {
+        try {
+            const response = await myWixClient.products.queryProducts().find({
+                offset,
+                limit,
+            });
 
-        allProducts = allProducts.concat(items);
+            const { items, totalCount: total } = response;
+            totalCount = total;
 
-        if (paging && paging.nextCursor) {
-            cursor = paging.nextCursor;
-        } else {
-            hasNext = false;
+            // console.log(`Fetched ${items.length} products (Offset: ${offset}). Total Count: ${totalCount}`);
+            allProducts = allProducts.concat(items);
+
+            // Break the loop if no more products are available
+            if (allProducts.length >= totalCount) break;
+
+            offset += limit; // Increment offset for the next page
+        } catch (error) {
+            console.error("Error fetching products:", error.message);
+            throw new Error("Failed to fetch products");
         }
     }
-    
-    return allProducts;
 
+    console.log(`Total products fetched: ${allProducts.length}`);
+    return { items: allProducts, totalCount: allProducts.length };
 }
+
 
 async function queryCollections() {
   const { items } = await myWixClient.collections.queryCollections().find();

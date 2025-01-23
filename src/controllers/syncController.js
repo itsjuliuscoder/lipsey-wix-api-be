@@ -10,7 +10,7 @@ async function syncInventory(req, res) {
     const lipseyData = await getCatalogFeed();
   
     const unifiedLipseyData = mapLipseyToUnifiedFormat(lipseyData);
-    const unifiedWixData = mapWixToUnifiedFormat(wixData);
+    const unifiedWixData = mapWixToUnifiedFormat(wixData.items);
   
     const updates = unifiedLipseyData.map((lipseyItem) => {
       const wixItem = unifiedWixData.find((item) => item.sku === lipseyItem.sku);
