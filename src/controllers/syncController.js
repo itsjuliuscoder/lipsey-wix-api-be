@@ -142,9 +142,9 @@ async function syncInventories() {
             if (matchingWixProduct) {
                 const wixStock = matchingWixProduct.variants[0].stock.quantity || 0;
                 const lipseysStock = lipseysProduct.quantity || 0;
-
+                
                 if (wixStock !== lipseysStock) {
-                    await updateWixInventory(matchingWixProduct._id, lipseysStock);
+                    // await updateWixInventory(matchingWixProduct._id, lipseysStock);
                     updatedProducts.push({
                         wixProductId: matchingWixProduct._id,
                         itemNo: lipseysProduct.itemNo,
