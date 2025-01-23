@@ -68,31 +68,37 @@ async function syncInventory(req, res) {
         }, {});
 
         // Iterate through Wix products and sync quantities
-        const updates = [];
+        const syncedProducts = [];
+        const updatedProducts = [];
+        const unchangedProducts = [];
+
         for (const wixProduct of wixData) {
             if (selectedProductSkus.includes(wixProduct.sku)) {
                 console.log('Syncing product:', wixProduct.sku);
                 
                 const lipseyQuantity = lipseyMap[wixProduct.sku];
 
-                if (lipseyQuantity !== undefined && wixProduct.stock.quantity !== lipseyQuantity) {
-                    // await updateWixInventory(wixProduct._id, lipseyQuantity);
-                    updates.push({ sku: wixProduct.sku, updatedQuantity: lipseyQuantity });
+                if (lipseyQuantity !== undefined) {
+                    if (wixProduct.stock.quantity !== lipseyQuantity) {
+                        // await updateWixInventory(wixProduct._id, lipseyQuantity);
+                        updatedProducts.push({ sku: wixProduct.sku, updatedQuantity: lipseyQuantity });
 
-                    // Save the synchronization details in the database
-                    const syncLog = new SyncLog({
-                        sku: wixProduct.sku,
-                        updatedQuantity: lipseyQuantity,
-                    });
+                        // Save the synchronization details in the database
+                        const syncLog = new SyncLog({
+                            sku: wixProduct.sku,
+                            updatedQuantity: lipseyQuantity,
+                        });
 
-                    let syncResp = await syncLog.save();
-
-                    // console.log('Synced product:', syncResp);
+                        await syncLog.save();
+                    } else {
+                        unchangedProducts.push({ sku: wixProduct.sku, quantity: wixProduct.stock.quantity });
+                    }
+                    syncedProducts.push({ sku: wixProduct.sku, quantity: lipseyQuantity });
                 }
             }
         }
 
-        res.json({ message: 'Synchronization complete', updates });
+        res.json({ message: 'Synchronization completed', syncedProducts, updatedProducts, unchangedProducts });
     } catch (error) {
         console.error('Error during synchronization:', error.message);
         res.status(500).json({ error: 'Synchronization failed', details: error.message });
