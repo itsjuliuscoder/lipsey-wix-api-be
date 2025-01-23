@@ -121,7 +121,7 @@ function mapWixToUnifiedFormat(wixData) {
 
 async function syncInventories() {
     try {
-        const lipseysProducts = data;
+        const lipseysProducts = await getCatalogFeed();
         // console.log('lipseysProducts', lipseysProducts[0].itemNo);
         const wixProducts = await queryProducts();
         const wixData = wixProducts.items;
