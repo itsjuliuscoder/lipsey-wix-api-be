@@ -21,9 +21,26 @@ const axiosInstance = axios.create({
 
 
 async function queryProducts() {
-  const { items } = await myWixClient.products.queryProducts().find();
+  
+    let allProducts = [];
+    let hasNext = true;
+    let cursor = null;
 
-  return items;
+    while (hasNext) {
+        const response = await myWixClient.products.queryProducts().find({ cursor });
+        const { items, paging } = response;
+
+        allProducts = allProducts.concat(items);
+
+        if (paging && paging.nextCursor) {
+            cursor = paging.nextCursor;
+        } else {
+            hasNext = false;
+        }
+    }
+    
+    return allProducts;
+
 }
 
 async function queryCollections() {

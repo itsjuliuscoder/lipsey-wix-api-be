@@ -7,7 +7,7 @@ async function syncInventory(req, res) {
   try {
     
     const wixData = await queryProducts();
-    const lipseyData = data;
+    const lipseyData = await getCatalogFeed();
   
     const unifiedLipseyData = mapLipseyToUnifiedFormat(lipseyData);
     const unifiedWixData = mapWixToUnifiedFormat(wixData);
