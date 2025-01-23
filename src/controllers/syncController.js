@@ -87,7 +87,7 @@ async function syncInventory(req, res) {
 
                     let syncResp = await syncLog.save();
 
-                    console.log('Synced product:', syncResp);
+                    // console.log('Synced product:', syncResp);
                 }
             }
         }
@@ -121,11 +121,14 @@ function mapWixToUnifiedFormat(wixData) {
 
 async function syncInventories() {
     try {
-        const lipseysProducts = await getCatalogFeed();
+        const lipseysProducts = data;
+        // console.log('lipseysProducts', lipseysProducts[0].itemNo);
         const wixProducts = await queryProducts();
+        const wixData = wixProducts.items;
+        // console.log('wixProducts', wixProducts);
 
-        // Ensure wixProducts is an array
-        if (!Array.isArray(wixProducts)) {
+        // Ensure wixData is an array
+        if (!Array.isArray(wixData)) {
             throw new Error('Wix products data is not an array');
         }
 
@@ -135,14 +138,18 @@ async function syncInventories() {
         const unchangedProducts = [];
 
         for (const lipseysProduct of lipseysProducts) {
-            const matchingWixProduct = wixProducts.find(
+            console.log('Syncing product:', lipseysProduct.itemNo);
+            console.log('wixData', wixData);
+            const matchingWixProduct = wixData.find(
                 (wixProduct) => wixProduct.sku === lipseysProduct.itemNo
             );
+
+            // console.log('Matching product:', matchingWixProduct);
 
             if (matchingWixProduct) {
                 const wixStock = matchingWixProduct.variants[0].stock.quantity || 0;
                 const lipseysStock = lipseysProduct.quantity || 0;
-                
+
                 if (wixStock !== lipseysStock) {
                     // await updateWixInventory(matchingWixProduct._id, lipseysStock);
                     updatedProducts.push({

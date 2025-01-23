@@ -7,6 +7,7 @@ router.post('/', syncInventory);
 router.post('/sync-inventory', async (req, res) => {
     try {
         const syncResults = await syncInventories();
+        // console.log("syncResults", syncResults);
         res.status(200).json({
             message: 'Inventory sync complete!',
             synced: syncResults.syncedProducts,
