@@ -5,6 +5,7 @@ const authRoutes = require('./routes/authRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const syncRoutes = require('./routes/syncRoutes');  
 const cors = require('cors');
+// require('./jobs/cronJob');
 
 const app = express();
 require('dotenv').config();
