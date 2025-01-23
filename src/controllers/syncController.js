@@ -122,10 +122,8 @@ function mapWixToUnifiedFormat(wixData) {
 async function syncInventories() {
     try {
         const lipseysProducts = await getCatalogFeed();
-        // console.log('lipseysProducts', lipseysProducts[0].itemNo);
         const wixProducts = await queryProducts();
         const wixData = wixProducts.items;
-        // console.log('wixProducts', wixProducts);
 
         // Ensure wixData is an array
         if (!Array.isArray(wixData)) {
@@ -138,13 +136,9 @@ async function syncInventories() {
         const unchangedProducts = [];
 
         for (const lipseysProduct of lipseysProducts) {
-            console.log('Syncing product:', lipseysProduct.itemNo);
-            console.log('wixData', wixData);
             const matchingWixProduct = wixData.find(
                 (wixProduct) => wixProduct.sku === lipseysProduct.itemNo
             );
-
-            // console.log('Matching product:', matchingWixProduct);
 
             if (matchingWixProduct) {
                 const wixStock = matchingWixProduct.variants[0].stock.quantity || 0;
