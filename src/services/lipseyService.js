@@ -18,13 +18,13 @@ async function getLipseyInventory() {
 
 async function getCatalogFeed() {
 
-  let payload = {
-    "email": "rboutin249@gmail.com",
-    "password": "BayState21!"
-  }
-  payload = JSON.stringify(payload);
-  const response = await authLogin(payload);
-  const token = response.token;
+  // let payload = {
+  //   "email": "rboutin249@gmail.com",
+  //   "password": "BayState21!"
+  // }
+  // payload = JSON.stringify(payload);
+  // const response = await authLogin(payload);
+  // const token = response.token;
 
   try {
     const response = await axios({
