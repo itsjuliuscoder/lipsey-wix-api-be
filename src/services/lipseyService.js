@@ -33,12 +33,19 @@ async function getCatalogFeed() {
 }
 
 async function pricingQuantityFeed(){
+  const payload = {
+    "email": "rboutin249@gmail.com",
+    "password": "BayState21!"
+  }
+  const response = await authLogin(payload);
+  const token = response.token;
+
   try {
     const response = await axios({
       method: 'get',
       url: `${LIPSEY_API_BASE_URL}/integration/items/PricingQuantityFeed`,
       headers: {
-        Token: `${LIPSEY_AUTH_TOKEN}`,
+        Token: `${token}`,
       },
     });
     return response.data;
