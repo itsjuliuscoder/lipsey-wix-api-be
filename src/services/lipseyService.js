@@ -31,7 +31,7 @@ async function getCatalogFeed() {
       method: 'get',
       url: `${LIPSEY_API_BASE_URL}/integration/items/CatalogFeed`,
       headers: {
-        Token: `${token}`,
+        Token: `${LIPSEY_AUTH_TOKEN}`,
       },
     });
     return response.data.data;
