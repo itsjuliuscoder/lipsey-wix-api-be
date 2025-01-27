@@ -1,0 +1,22 @@
+{
+	"Email": "rboutin249@gmail.com",
+	"Password": "BayState21!"
+}
+
+import { products } from '@wix/stores';
+import { createClient, OAuthStrategy } from '@wix/sdk';
+
+//To access the Wix APIs, create a client with the createClient() function imported from the @wix/sdk package.
+const myWixClient = createClient({
+  modules: { products },
+  auth: OAuthStrategy({ clientId: '3e0af21c-448b-4c0f-9324-122e33b96358' }),
+});
+
+const productList = await myWixClient.products.queryProduct().find();
+
+console.log('My Products:');
+console.log('Total: ', productList.items.length);
+console.log(productList.items
+  .map((item) => item.name)
+  .join('\n')
+);

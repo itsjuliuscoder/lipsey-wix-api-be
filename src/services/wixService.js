@@ -12,19 +12,24 @@ const myWixClient = createClient({
 });
 
 const axiosInstance = axios.create({
-  baseURL: WIX_API_BASE_URL,
+  baseURL: "https://www.wixapis.com/stores/v2",
   headers: {
-    Authorization: WIX_AUTH_TOKEN,
-    'Content-Type': 'application/json',
+    Authorization: `Bearer ${process.env.WIX_API_KEY}`,
+    "Content-Type": "application/json",
   },
 });
 
 
-async function queryProducts() {
+async function queryProduct() {
+
+    const getCollections = await queryCollections();
+    const filteredData = await filterByName(getCollections, "All Products");
+    console.log("this is the collections total products", filteredData[0].numberOfProducts);
+
     let allProducts = [];
     let offset = 0;
     const limit = 100; // Number of items per page
-    let totalCount = 0;
+    let totalCount = filteredData[0].numberOfProducts;
 
     while (true) {
         try {
@@ -32,9 +37,9 @@ async function queryProducts() {
                 offset,
                 limit,
             });
-
-            const { items, totalCount: total } = response;
-            totalCount = total;
+            
+            const { items } = response;
+            // totalCount = total;
 
             // console.log(`Fetched ${items.length} products (Offset: ${offset}). Total Count: ${totalCount}`);
             allProducts = allProducts.concat(items);
@@ -83,6 +88,10 @@ async function queryCollections() {
   return items;
 }
 
+async function filterByName(array, name){
+  return array.filter(item => item.name === name)
+}
+
 
 
 // Update Wix inventory
@@ -92,9 +101,21 @@ async function updateWixInventory(productId, quantity) {
   });
   return response.data;
 }
-
+//
 async function updateProduct(id, product) {
     const response = await myWixClient.products.updateProduct(id, product);
-  }
+}
 
-module.exports = { updateWixInventory, queryProducts, queryCollections, queryInventory};
+// Function to query all products in a specific collection
+async function queryProductsByCollection(collectionId) {
+  const response = await axiosInstance.post("/products/query", {
+    filter: {
+      collectionIds: [collectionId],
+    },
+  });
+
+  console.log("Products:", response.data);
+  return response.data;
+}
+
+module.exports = { updateWixInventory, queryProduct, queryCollections, queryInventory, queryProductsByCollection};

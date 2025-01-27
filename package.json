@@ -12,8 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@wix/sdk": "^1.15.8",
-    "@wix/stores": "^1.0.346",
+    "@wix/sdk": "^1.15.9",
+    "@wix/stores": "^1.0.347",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

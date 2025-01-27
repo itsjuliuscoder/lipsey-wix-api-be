@@ -1,4 +1,4 @@
-const { queryProducts, updateWixInventory } = require('../services/wixService');
+const { queryProduct, updateWixInventory } = require('../services/wixService');
 const { getLipseyInventory, getCatalogFeed } = require('../services/lipseyService');
 // const data = require('./data.json');
 const SyncLog = require('../models/SyncLog');
@@ -9,7 +9,7 @@ const SyncLog = require('../models/SyncLog');
 async function syncInventory(req, res) {
   try {
     
-    const wixData = await queryProducts();
+    const wixData = await queryProduct();
     const lipseyData = await getCatalogFeed();
   
     const unifiedLipseyData = mapLipseyToUnifiedFormat(lipseyData);
@@ -58,7 +58,7 @@ async function syncInventory(req, res) {
 
         // Fetch inventory data from both Lipsey and Wix
         const lipseyInventory = await getCatalogFeed();
-        const wixInventory = await queryProducts(); 
+        const wixInventory = await queryProduct(); 
         const wixData = wixInventory.items;
 
         // Create a map for quick lookup of Lipsey product quantities
@@ -128,7 +128,7 @@ function mapWixToUnifiedFormat(wixData) {
 async function syncInventories() {
     try {
         const lipseysProducts = await getCatalogFeed();
-        const wixProducts = await queryProducts();
+        const wixProducts = await queryProduct();
         const wixData = wixProducts.items;
 
         // Ensure wixData is an array

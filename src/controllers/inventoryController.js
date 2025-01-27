@@ -1,6 +1,6 @@
 // src/controllers/inventoryController.js
 const Product = require('../models/product');
-const {queryProducts, queryCollections, queryInventory} = require('../services/wixService');
+const {queryProduct, queryCollections, queryInventory, fetchAllProducts, queryProductsByCollection} = require('../services/wixService');
 const {getCatalogFeed, pricingQuantityFeed } = require('../services/lipseyService');
 const axios = require('axios');
 
@@ -13,9 +13,28 @@ const syncInventory = async (req, res) => {
   }
 };
 
+const getProductsByCollections = async (req, res) => {
+    console.log("req ", req.params.id)
+    try {
+      const products = await queryProductsByCollection(req.params.id);
+      res.status(200).json(products);
+    } catch(error) {
+      res.status(500).json({ error: error.message });
+    }
+}
+
 const getWixProducts = async (req, res) => {
   try {
-    const products = await queryProducts();
+    const products = await queryProduct();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getWixProductsV2 = async (req, res) => {
+  try {
+    const products = await fetchAllProducts();
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -50,4 +69,4 @@ const getLipseyPricingQuantityFeed = async (req, res) => {
   }
 }
 
-module.exports = { syncInventory, getWixProducts, getWixCollections, getLipseyCatalog, getLipseyPricingQuantityFeed };
+module.exports = { syncInventory, getProductsByCollections, getWixProductsV2, getWixProducts, getWixCollections, getLipseyCatalog, getLipseyPricingQuantityFeed };
