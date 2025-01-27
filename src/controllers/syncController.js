@@ -153,6 +153,7 @@ async function syncInventories() {
                 if (wixStock !== lipseysStock) {
                     // await updateWixInventory(matchingWixProduct._id, lipseysStock);
                     updatedProducts.push({
+                        productName: wixProduct.name,
                         wixProductId: matchingWixProduct._id,
                         itemNo: lipseysProduct.itemNo,
                         previousStock: wixStock,
@@ -160,12 +161,14 @@ async function syncInventories() {
                     });
                 } else {
                     unchangedProducts.push({
+                        productName: wixProduct.name,
                         wixProductId: matchingWixProduct._id,
                         itemNo: lipseysProduct.itemNo,
                         stock: wixStock,
                     });
                 }
                 syncedProducts.push({
+                    productName: wixProduct.name,
                     wixProductId: matchingWixProduct._id,
                     itemNo: lipseysProduct.itemNo,
                     stock: lipseysStock,
