@@ -33,10 +33,11 @@ async function getCatalogFeed() {
 }
 
 async function pricingQuantityFeed(){
-  const payload = {
+  let payload = {
     "email": "rboutin249@gmail.com",
     "password": "BayState21!"
   }
+  payload = JSON.stringify(payload);
   const response = await authLogin(payload);
   const token = response.token;
 
