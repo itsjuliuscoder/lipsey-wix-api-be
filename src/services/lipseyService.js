@@ -34,8 +34,8 @@ async function getCatalogFeed() {
 
 async function pricingQuantityFeed(){
   let payload = {
-    "email": "rboutin249@gmail.com",
-    "password": "BayState21!"
+    email: "rboutin249@gmail.com",
+    password: "BayState21!"
   }
   payload = JSON.stringify(payload);
   const response = await authLogin(payload);
