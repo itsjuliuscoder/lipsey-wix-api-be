@@ -14,13 +14,15 @@ exports.handleOAuthCallback = async (code) => {
     console.log("this is the code -->", code)
     const url = "https://www.wix.com/oauth/access";
 
-    // const response = await axios.post(url, {
-    //     client_id: clientId,
-    //     client_secret: clientSecret,
-    //     code,
-    //     redirect_uri: redirectUri,
-    //     grant_type: "authorization_code",
-    // });
+    const response = await axios.post(url, {
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+    });
 
-    // return response.data.access_token;
+    console.log("response ", response);
+
+    return response.data.access_token;
 };
