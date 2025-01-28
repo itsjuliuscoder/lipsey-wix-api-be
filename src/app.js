@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
     res.json({ message: 'Lipseys & Wix Synchronization API' });
 });
 
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/inventory', inventoryRoutes);

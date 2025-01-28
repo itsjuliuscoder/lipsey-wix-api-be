@@ -1,8 +1,18 @@
 // src/controllers/inventoryController.js
 const Product = require('../models/product');
-const {queryProduct, queryCollections, queryInventory, fetchAllProducts, queryProductsByCollection} = require('../services/wixService');
+const {queryProduct, queryCollections, queryInventory, updateWixInventory, updateProductInventory, fetchAllProducts, queryProductsByCollection} = require('../services/wixService');
 const {getCatalogFeed, pricingQuantityFeed } = require('../services/lipseyService');
+const { getToken } = require('../services/wixApiService');
 const axios = require('axios');
+
+const getWixToken = async (req, res) => {
+  try {
+    const response = await getToken();
+    res.status(200).json(response);
+  } catch(error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 
 const syncInventory = async (req, res) => {
   try {
@@ -69,4 +79,18 @@ const getLipseyPricingQuantityFeed = async (req, res) => {
   }
 }
 
-module.exports = { syncInventory, getProductsByCollections, getWixProductsV2, getWixProducts, getWixCollections, getLipseyCatalog, getLipseyPricingQuantityFeed };
+const updateWixProduct = async (req, res) => {
+  try {
+    // console.log("req.body --> ", req.body)
+    const wixProductId = req.body.wixProductId;
+    const quantity = req.body.quantity;
+    const updatedProduct = await updateProductInventory(wixProductId, quantity);
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+
+
+module.exports = { syncInventory, getWixToken, updateWixProduct, getProductsByCollections, getWixProductsV2, getWixProducts, getWixCollections, getLipseyCatalog, getLipseyPricingQuantityFeed };
