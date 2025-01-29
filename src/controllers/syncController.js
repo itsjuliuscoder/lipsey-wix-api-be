@@ -96,7 +96,7 @@ async function syncInventories() {
 
         for (const lipseysProduct of lipseysProducts) {
             const matchingWixProduct = wixData.find(
-                (wixProduct) => wixProduct.sku === lipseysProduct.itemNo
+                (wixProduct) => wixProduct.sku === lipseysProduct.manufacturerModelNo
             );
 
             if (matchingWixProduct) {
@@ -108,7 +108,7 @@ async function syncInventories() {
                     updatedProducts.push({
                         productName: matchingWixProduct.name,
                         wixProductId: matchingWixProduct._id,
-                        itemNo: lipseysProduct.itemNo,
+                        manufacturerModelNo: lipseysProduct.manufacturerModelNo,
                         previousStock: wixStock,
                         updatedStock: lipseysStock,
                     });
@@ -123,7 +123,7 @@ async function syncInventories() {
                 syncedProducts.push({
                     productName: matchingWixProduct.name,
                     wixProductId: matchingWixProduct._id,
-                    itemNo: lipseysProduct.itemNo,
+                    manufacturerModelNo: lipseysProduct.manufacturerModelNo,
                     stock: lipseysStock,
                 });
             } else {
