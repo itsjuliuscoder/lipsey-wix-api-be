@@ -1,33 +1,38 @@
 require('dotenv').config();
 const axios = require('axios');
-const WIX_API_BASE_URL = 'https://www.wixapis.com/stores/v2';
 // Load environment variables
 const API_KEY = process.env.WIX_API_KEY_THREE;
 const SITE_ID = process.env.WIX_SITE_ID;
-const ACCOUNT_ID = process.env.WIX_ACCOUNT_ID;
 
 // Define the API endpoint
 const PRODUCTS_API_URL = "https://www.wixapis.com/stores/v1/products/query";
 
+
 const { createClient, ApiKeyStrategy, OAuthStrategy } = require("@wix/sdk");
 const { products, collections, inventory } = require("@wix/stores");
 
-
-require('@wix/sdk').AppStrategy
-const wixClient = createClient({
-    modules: { products, collections, inventory  },
-    auth: OAuthStrategy({ clientId: '3d517b60-eaa6-4d6c-a0a1-cae06ddfd79a', scopes: ['WIX_STORES.MODIFY_INVENTORY', 'WIX_STORES.READ_PRODUCTS'] }),
-});
+// const wixClient = createClient({
+//     auth: OAuthStrategy({
+//       clientId: '3e0af21c-448b-4c0f-9324-122e33b96358',
+//       tokens: {
+//         accessToken: ACCESS_TOKEN,
+//         refreshToken: REFRESH_TOKEN
+//       },
+//       siteId: SITE_ID,
+//     }),
+//     modules: { products, inventory }
+// });
 
 // Create a client instance using the API Key
 const myWixClient = createClient({
   auth: ApiKeyStrategy({
     apiKey: API_KEY,
     siteId: SITE_ID,
-    accountId: ACCOUNT_ID,
+    // accountId: ACCOUNT_ID,
   }),
   modules: {
     products,
+    inventory
   }
 });
 
@@ -70,32 +75,51 @@ async function queryInventory() {
 async function queryProduct() {
   // console.log("These are the credentials ", API_KEY, ACCOUNT_ID, SITE_ID);
   try {
-    const response = await wixClient.products
+    const response = await myWixClient.products
     .queryProducts().descending('lastUpdated')
     .limit(100)
     .find();
     
     return response;
   } catch (error) {
-    console.error("Error fetching products:", error.response?.data || error.message);
+    // console.error("Error fetching products:", error.response?.data || error.message);
+    console.log("error response", error)
   }
 }
 
-
 async function updateProductInventory(productId, quantity) {
+  const url = `https://www.wixapis.com/stores/v2/inventoryItems/product/${productId}`;
+  console.log(`This is the Withdrawal --> ${url} & Product Id ${productId}`)
+  const headers = {
+    'Authorization': API_KEY,
+    'wix-site-id': SITE_ID,
+    'Content-Type': 'application/json'
+  };
 
-  console.log("Product Id & Quantity -->", productId, quantity);
+  const data = {
+    inventoryItem: {
+      trackQuantity: true,
+      variants: [
+        {
+          variantId: '00000000-0000-0000-0000-000000000000',
+          quantity: quantity
+        }
+      ]
+    }
+  };
+
+  const payload = JSON.stringify(data);
+
+  console.log(`This is the request data ${payload}`);
 
   try {
-    //const productId = 'your-product-id'; // Replace with the actual product ID
-    const newQuantity = 10; // Replace with the desired quantity
-
-    const updatedProduct = await wixClient.inventory.updateInventoryVariants(productId, quantity);
-    console.log("Product inventory updated successfully:", updatedProduct);
+    const response = await axios.patch(url, payload, { headers });
+    //console.log('Inventory updated successfully:', response);
+    return response.data;
   } catch (error) {
-    console.error("Error updating product inventory:", error.response?.data || error.message);
+    console.error('Error updating inventory:', error.response ? error.response.data : error.message);
+    throw error;
   }
-
 }
 
 

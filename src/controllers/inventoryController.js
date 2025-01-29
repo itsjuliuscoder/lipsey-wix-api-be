@@ -81,7 +81,6 @@ const getLipseyPricingQuantityFeed = async (req, res) => {
 
 const updateWixProduct = async (req, res) => {
   try {
-    // console.log("req.body --> ", req.body)
     const wixProductId = req.body.wixProductId;
     const quantity = req.body.quantity;
     const updatedProduct = await updateProductInventory(wixProductId, quantity);
