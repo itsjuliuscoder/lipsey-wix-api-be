@@ -6,7 +6,7 @@ const authRoutes = require('./routes/authRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const syncRoutes = require('./routes/syncRoutes');  
 const cors = require('cors');
-// require('./jobs/cronJob');
+//require('./jobs/cronJob');
 
 // Wix App Credentials
 const CLIENT_ID = encodeURIComponent(process.env.APP_ID);

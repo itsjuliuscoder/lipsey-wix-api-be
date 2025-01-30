@@ -1,6 +1,6 @@
-const { queryProduct, updateWixInventory } = require('../services/wixService');
+const { queryProduct, updateWixInventory, updateProductInventory } = require('../services/wixService');
 const { getLipseyInventory, getCatalogFeed } = require('../services/lipseyService');
-// const data = require('./data.json');
+const data = require('./data.json');
 const SyncLog = require('../models/SyncLog');
 
 
@@ -80,9 +80,9 @@ function mapWixToUnifiedFormat(wixData) {
 
 async function syncInventories() {
     try {
-        const lipseysProducts = await getCatalogFeed();
+        const lipseysProducts =  await getCatalogFeed();
         const wixProducts = await queryProduct();
-        const wixData = wixProducts.items;
+        const wixData = wixProducts._items;
 
         // Ensure wixData is an array
         if (!Array.isArray(wixData)) {
@@ -96,15 +96,27 @@ async function syncInventories() {
 
         for (const lipseysProduct of lipseysProducts) {
             const matchingWixProduct = wixData.find(
-                (wixProduct) => wixProduct.sku === lipseysProduct.manufacturerModelNo
+                (wixProduct) => wixProduct.sku === lipseysProduct.itemNo
             );
 
             if (matchingWixProduct) {
                 const wixStock = matchingWixProduct.variants[0].stock.quantity || 0;
                 const lipseysStock = lipseysProduct.quantity || 0;
-
+                console.log(wixStock, "wix product quantity", lipseysStock, "lipseys quantity")
                 if (wixStock !== lipseysStock) {
-                    // await updateWixInventory(matchingWixProduct._id, lipseysStock);
+
+                    const payload = {
+                        sku: matchingWixProduct.sku,
+                        productName: matchingWixProduct.name,
+                        productId: matchingWixProduct._id,
+                        previousQuantity: wixStock, 
+                        updatedQuantity: lipseysStock
+                    }
+
+                    await updateProductInventory(matchingWixProduct._id, lipseysStock);
+                    const newLog = new SyncLog(payload);
+                    await newLog.save();
+                    console.log("SyncLog -->", newLog)
                     updatedProducts.push({
                         productName: matchingWixProduct.name,
                         wixProductId: matchingWixProduct._id,

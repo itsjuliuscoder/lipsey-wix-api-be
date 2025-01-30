@@ -69,8 +69,6 @@ async function queryInventory() {
     return { items: allInventoryItems, totalCount: allInventoryItems.length };
 }
 
-
-
 // Function to get products
 async function queryProduct() {
   // console.log("These are the credentials ", API_KEY, ACCOUNT_ID, SITE_ID);
@@ -86,6 +84,7 @@ async function queryProduct() {
     console.log("error response", error)
   }
 }
+
 
 async function updateProductInventory(productId, quantity) {
   const url = `https://www.wixapis.com/stores/v2/inventoryItems/product/${productId}`;
