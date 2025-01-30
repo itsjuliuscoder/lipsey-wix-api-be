@@ -1,6 +1,6 @@
 const { queryProduct, updateWixInventory, updateProductInventory } = require('../services/wixService');
 const { getLipseyInventory, getCatalogFeed } = require('../services/lipseyService');
-const data = require('./data.json');
+// const data = require('./data.json');
 const SyncLog = require('../models/SyncLog');
 
 
