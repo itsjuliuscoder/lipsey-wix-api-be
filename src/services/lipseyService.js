@@ -18,20 +18,20 @@ async function getLipseyInventory() {
 
 async function getCatalogFeed() {
 
-  // let payload = {
-  //   "email": "rboutin249@gmail.com",
-  //   "password": "BayState21!"
-  // }
+  let payload = {
+    "email": "rboutin249@gmail.com",
+    "password": "BayState21!"
+  }
   // payload = JSON.stringify(payload);
-  // const response = await authLogin(payload);
-  // const token = response.token;
+  const response = await authLogin(payload);
+  const token = response.token;
 
   try {
     const response = await axios({
       method: 'get',
       url: `${LIPSEY_API_BASE_URL}/integration/items/CatalogFeed`,
       headers: {
-        Token: `${LIPSEY_AUTH_TOKEN}`,
+        Token: `${token}`,
       },
     });
     return response.data.data;
@@ -60,10 +60,10 @@ async function pricingQuantityFeed(){
 }
 
 async function authLogin(body) {
-  console.log("authLogin body", body);
+  // console.log("authLogin body", body);
   const payload = {
-    Email: body.email,
-    Password: body.password,
+    Email: "rboutin249@gmail.com",
+    Password: "BayState21!",
   };
 
   try {
