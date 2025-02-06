@@ -46,7 +46,7 @@ router.post('/sync-update', async (req, res) => {
 
 router.get('/get-synced-products', async (req, res) => {
     try {
-        const syncedProducts = await SyncLog.find();
+        const syncedProducts = await SyncLog.find().sort({ createdAt: -1 });
         const totalCount = await SyncLog.countDocuments();
         res.status(200).json({
             message: 'Fetched synced products successfully!',
