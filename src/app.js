@@ -6,7 +6,7 @@ const authRoutes = require('./routes/authRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const syncRoutes = require('./routes/syncRoutes');  
 const cors = require('cors');
-require('./jobs/cronJob');
+//require('./jobs/cronJob');
 
 // Wix App Credentials
 const CLIENT_ID = encodeURIComponent(process.env.APP_ID);
@@ -18,7 +18,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://lipsey-wix-api-be-v1.onrender.com'],
 }));
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
