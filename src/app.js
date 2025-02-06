@@ -18,7 +18,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://lipsey-wix-api-be-v1.onrender.com'],
+    origin: ['http://localhost:3000', 'https://lipseys-wix-fe-app-v1.vercel.app'],
 }));
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
